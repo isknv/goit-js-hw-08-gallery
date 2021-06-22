@@ -49,7 +49,7 @@ const galleryItems = [
 
 const ul = document.querySelector('.gallery');
 const isOpen = document.querySelector('.lightbox');
-const closeModal = document.querySelector('button[data-action="close-lightbox"]');
+const btnCloseModal = document.querySelector('button[data-action="close-lightbox"]');
 const originalPhotos = document.querySelector('.lightbox__image');
 
 //========== Добавление список галереи ========== //
@@ -76,17 +76,28 @@ ul.addEventListener('click', event => {
     isOpen.classList.add('is-open');
   }
 
-  const attrSrc = event.target.getAttribute('src');
-
-  galleryItems.map(item => {
-    if (attrSrc === item.preview) {
-      originalPhotos.setAttribute('src', item.original);
-    }
-  });
+  const attrSrc = event.target.dataset.source;
+  const alt = event.target.getAttribute('alt');
+  updateAttr(attrSrc, alt);
+  window.addEventListener('keyup', escCloseModal);
+  btnCloseModal.addEventListener('click', closeModal)
 });
+
+function updateAttr(src = '', alt = '') {
+  originalPhotos.src = src;
+  originalPhotos.alt = alt;
+}
 
 //========== Закрытие модалку ========== //
 
-closeModal.addEventListener('click', () => {
+function closeModal() {
   isOpen.classList.remove('is-open');
-});
+  updateAttr();
+  window.removeEventListener('keyup', escCloseModal);
+}
+
+function escCloseModal(event) {
+  if (event.code === 'Escape') {
+    closeModal();
+  }
+}
